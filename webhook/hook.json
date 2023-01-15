@@ -1,0 +1,12 @@
+[
+  {
+      "id": "simple-api-deploy",
+      "execute-command": "/home/ubuntu/simple-docker-swarm/webhook/scripts/simple-api-deploy.sh",
+      "command-working-directory": "/home/ubuntu/simple-docker-swarm"
+  },
+  {
+      "id": "simple-web-deploy",
+      "execute-command": "/home/ubuntu/simple-docker-swarm/webhook/scripts/simple-web-deploy.sh",
+      "command-working-directory": "/home/ubuntu/simple-docker-swarm"
+  }
+]
