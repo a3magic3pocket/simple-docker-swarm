@@ -1,0 +1,6 @@
+[submodule "simple-web-example"]
+	path = simple-web-example
+	url = https://github.com/a3magic3pocket/simple-web-example.git
+[submodule "simple-api-example"]
+	path = simple-api-example
+	url = https://github.com/a3magic3pocket/simple-api-example.git
