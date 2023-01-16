@@ -1,3 +1,5 @@
 IDENTITY_KEY
 AUTH_SECRET_KEY
 *.log
+sqlite3
+
