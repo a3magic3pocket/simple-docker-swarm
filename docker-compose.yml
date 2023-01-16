@@ -1,0 +1,50 @@
+version: "3.9"
+
+services:
+  web:
+    image: a3magic3pocket/simple-web:${WEB_TAG}
+    environment:
+      - "FRONTEND_ORIGIN=coinlocker.link"
+      - "BACKEND_ORIGIN=api.coinlocker.link"
+    networks:
+      - simple-net
+    deploy:
+      mode: replicated
+      replicas: 1
+  api:
+    image: a3magic3pocket/simple-api:${API_TAG}
+    environment:
+      - "USE_K8S=true"
+      - "FRONTEND_URL_LIST=https://www.coinlocker.link,https://coinlocker.link"
+      - "GIN_MODE=release"
+      - "IDENTITY_KEY=${IDENTITY_KEY}"
+      - "AUTH_SECRET_KEY=${AUTH_SECRET_KEY}"
+    networks:
+      - simple-net
+    volumes:
+      - ./sqlite3:/root/api/sqlite3
+    deploy:
+      mode: replicated
+      replicas: 1
+  nginx:
+    image: nginx:1.23.3-alpine
+    ports:
+      - 80:80
+      - 443:443
+    configs:
+      - source: nginx-config
+        target: /etc/nginx/conf.d/default.conf
+    networks:
+      - simple-net
+    volumes:
+      - /etc/letsencrypt/live/coinlocker.link/fullchain.pem:/etc/ssl/live/fullchain1.pem
+      - /etc/letsencrypt/live/coinlocker.link/privkey.pem:/etc/ssl/live/privkey1.pem
+    extra_hosts:
+      - host.docker.internal:host-gateway
+
+networks:
+  simple-net:
+
+configs:
+  nginx-config:
+    file: "./nginx.conf"
