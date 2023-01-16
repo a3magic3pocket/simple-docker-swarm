@@ -10,7 +10,7 @@ docker swarm으로 simple locker 애플리케이션을 운영합니다.
     curl -fsSL https://get.docker.com -o get-docker.sh
     DRY_RUN=1 sudo sh ./get-docker.sh
 
-    # 웹훅 설치
+    # 웹훅 서버 설치
     sudo apt-get install webhook
     ```
 
@@ -82,4 +82,10 @@ docker swarm으로 simple locker 애플리케이션을 운영합니다.
     # - 프로그램이 실행할 수 있도록 실행권한 부여
     chmod +x ./webhook/scripts/simple-api-deploy.sh
     chmod +x ./webhook/scripts/simple-web-deploy.sh
+
+    # 웹훅 서버 실행(또는 재실행)
+    bash ./run_webhook.sh
+
+    # 로그 조회(Ctrl+c를 눌러 종료)
+    tail -f ./webhook.log
     ```
