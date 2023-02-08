@@ -7,7 +7,7 @@ export IDENTITY_KEY=`cat ${WORKING_DIR_PATH}/secrets/IDENTITY_KEY`
 export AUTH_SECRET_KEY=`cat ${WORKING_DIR_PATH}/secrets/AUTH_SECRET_KEY`
 
 # 초기화, git 최신화
-function init {
+function git_init {
     git --git-dir=${API_DIR_PATH}/.git pull origin main
     git --git-dir=${WEB_DIR_PATH}/.git pull origin main
 }
@@ -18,6 +18,41 @@ function set_tags {
     web_image_url=`get_image_url ${WEB_DIR_PATH}/simple-web.yml web`
     export API_TAG=`echo ${api_image_url} | cut -d ":" -f 2`
     export WEB_TAG=`echo ${web_image_url} | cut -d ":" -f 2`
+}
+
+# 새 이미지가 업데이트 되었는지 확인
+function is_image_updated {
+    local is_different=0
+
+    declare -a arr=("simple-api:${API_TAG}" "simple-web:${WEB_TAG}")
+
+    for row in "${arr[@]}"
+    do
+        local prefix=${row%%:*}
+        local yml_tag=${row##*:}
+
+        local current_tag=`docker ps | grep ${prefix} | awk -F ' ' '{ print $2 }' | awk -F ':' '{ print $2 }'`
+
+        if [[ ${current_tag} != ${yml_tag} ]];then
+            is_different=1
+            break
+        fi
+    done
+
+    return ${is_different}
+}
+
+# 초기 세팅
+function init {
+    git_init
+    set_tags
+    is_image_updated
+
+    local is_different=$?
+    if [[ ${is_different} -eq 0 ]];then
+        echo "image is not updated"
+        exit 1;
+    fi
 }
 
 # api, web manifest 파일에서 이미지 URL 추출
@@ -81,15 +116,12 @@ fi
 # 실행
 if [[ $1 = "stack" ]];then
     init
-    set_tags
     deploy_stack
 elif [[ $1 = "service:api" ]];then
     init
-    set_tags
     deploy_service "api"
 elif [[ $1 = "service:web" ]];then 
     init
-    set_tags
     deploy_service "web"
 else
     echo "mode is empty"
