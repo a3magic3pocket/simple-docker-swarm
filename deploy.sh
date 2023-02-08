@@ -13,7 +13,7 @@ function init {
 }
 
 # API_TAG, WEB_TAG 할당
-function set_tsgs {
+function set_tags {
     api_image_url=`get_image_url ${API_DIR_PATH}/simple-api.yml api`
     web_image_url=`get_image_url ${WEB_DIR_PATH}/simple-web.yml web`
     export API_TAG=`echo ${api_image_url} | cut -d ":" -f 2`
@@ -81,15 +81,15 @@ fi
 # 실행
 if [[ $1 = "stack" ]];then
     init
-    set_tsgs
+    set_tags
     deploy_stack
 elif [[ $1 = "service:api" ]];then
     init
-    set_tsgs
+    set_tags
     deploy_service "api"
 elif [[ $1 = "service:web" ]];then 
     init
-    set_tsgs
+    set_tags
     deploy_service "web"
 else
     echo "mode is empty"
